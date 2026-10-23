@@ -39,7 +39,7 @@ Bird& Bird::operator=(const Bird& other)
 
 Bird::~Bird()
 {
-    std::cout << "Bird: вызван деструктор."<< std::endl;
+    std::cout << "Bird: distructor."<< std::endl;
 }
 
 std::string Bird::getFeedingType() const
