@@ -2,12 +2,60 @@
 #include <string>
 #include <sstream>
 #include <stdexcept>
+#include <fstream>
+#include <cstdlib>
 #include <windows.h>
 
 #include "Keeper.h"
 #include "Fish.h"
 #include "Bird.h"
 #include "Cat.h"
+
+
+const std::string DATA_FILE = "animals.txt";
+
+// Очистка консоли Windows
+void clearScreen()
+{
+    system("cls");
+}
+
+// Ожидание нажатия Enter
+void pauseScreen()
+{
+    std::cout << "\nPress Enter to continue...";
+    std::string line;
+    std::getline(std::cin, line);
+}
+
+// Создание файла при первом запуске
+void ensureDataFileExists()
+{
+    std::ifstream existingFile(DATA_FILE);
+
+    if (existingFile.good())
+    {
+        return;
+    }
+
+    existingFile.close();
+
+    std::ofstream newFile(DATA_FILE);
+
+    if (!newFile.is_open())
+    {
+        throw std::runtime_error( "Cannot create animals.txt");
+    }
+
+    // Ноль означает, что в файле пока нет животных
+    newFile << "0\n";
+
+    if (!newFile)
+    {
+        throw std::runtime_error("Cannot initialize animals.txt");
+    }
+}
+
 
 // Ввод целого числа с проверкой
 bool readInt(const std::string& prompt, int& value)
@@ -108,7 +156,7 @@ void addAnimal(Keeper& keeper)
 // Вывод меню
 void showMenu()
 {
-    std::cout << "\nMENU\n";
+    std::cout << "MENU\n";
     std::cout << "1. Add animal\n";
     std::cout << "2. Show all the animals\n";
     std::cout << "3. Show one animal\n";
@@ -122,17 +170,30 @@ void showMenu()
 
 int main()
 {
-    SetConsoleCP(1251);  
+    SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
+
+    try
+    {
+        ensureDataFileExists();
+    }
+    catch (const std::exception& error)
+    {
+        std::cout << "Startup error: "<< error.what() << '\n';
+        return 1;
+    }
+
     Keeper keeper;
     bool running = true;
 
     while (running)
     {
+        clearScreen();
         showMenu();
+
         int choice;
 
-        if (!readInt("choice: ", choice))
+        if (!readInt("Your choice: ", choice))
         {
             break;
         }
@@ -200,47 +261,25 @@ int main()
                 break;
             }
 
+
             case 6:
-            {
-                std::string fileName;
-
-               
-
-                if (!std::getline(std::cin, fileName))
-                {
-                    running = false;
-                    break;
-                }
-
-               
-
-                keeper.saveToFile(fileName);
+                keeper.saveToFile(DATA_FILE);
+                std::cout << "Animals saved successfully.\n";
                 break;
-            }
+
+
 
             case 7:
-            {
-                std::string fileName;
-
-             
-
-                if (!std::getline(std::cin, fileName))
-                {
-                    running = false;
-                    break;
-                }
-
-               
-
-                keeper.loadFromFile(fileName);
+                keeper.loadFromFile(DATA_FILE);
+                std::cout << "Animals loaded successfully.\n";
                 break;
-            }
+
 
             case 8:
             {
                 int confirm;
 
-                if (!readInt("Remove all animals? (1 — yes, 0 — no): ",confirm))
+                if (!readInt("Remove all animals? (1 yes, 0 no): ",confirm))
                 {
                     running = false;
                     break;
@@ -271,6 +310,11 @@ int main()
         catch (const std::exception& error)
         {
             std::cout << "Error: " << error.what() << '\n';
+        }
+
+        if (running)
+        {
+            pauseScreen();
         }
     }
 
