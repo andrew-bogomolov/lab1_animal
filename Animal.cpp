@@ -23,12 +23,12 @@ Animal::~Animal()
     std::cout << "Animal: destructor." << std::endl;
 }
 
-std::string Animal::getBreed()
+std::string Animal::getBreed() const
 {
     return breed_;
 }
 
-std::string Animal::getColor()
+std::string Animal::getColor() const
 {
     return color_;
 }
