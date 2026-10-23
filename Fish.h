@@ -21,14 +21,14 @@ public:
     std::string getFeedingType() const;
     void setFeedingType(const std::string& feedingType);
 
-    void print() override;
+    void print() const override;
     void input() override;
 
-    void save(std::ostream& out) override;
+    void save(std::ostream& out) const override;
     void load(std::istream& in) override;
 
-    Fish* clone() override;
-    std::string getType() override;
+    Fish* clone() const override;
+    std::string getType() const override;
 };
 
 #endif
