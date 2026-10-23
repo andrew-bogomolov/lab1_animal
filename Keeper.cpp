@@ -2,11 +2,11 @@
 #include "Fish.h"
 #include "Bird.h"
 #include "Cat.h"
+
 #include <iostream>
 #include <fstream>
-#include <limits>
 #include <stdexcept>
-#include <utility>
+
 
 Keeper::Keeper(): animals_(nullptr), count_(0), capacity_(0)
 {
@@ -47,9 +47,9 @@ Keeper& Keeper::operator=(const Keeper& other)
     {
         Keeper temp(other);
 
-        std::swap(animals_, temp.animals_);
-        std::swap(count_, temp.count_);
-        std::swap(capacity_, temp.capacity_);
+        Animal** tempAnimals = animals_;
+        animals_ = temp.animals_;
+        temp.animals_ = tempAnimals;
     }
 
     std::cout << "Keeper: operator prisv."<< std::endl;
@@ -225,7 +225,7 @@ void Keeper::loadFromFile(const std::string& fileName)
         throw std::runtime_error("error fileCount");
     }
 
-    in.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+    in.ignore(10000, '\n');
 
     clear();
 
